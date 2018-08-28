@@ -2,13 +2,27 @@
 #define BATTLESHIP_CPP
 
 #include <iostream>
+#include <string>
+using namespace std;
 
 class battleship
 {
-    private:
 
-    public:
-    
+  private:
+    string name;
+
+  public:
+  
+    void setname(string n)
+    {
+        name = n;
+    }
+
+    string getname()
+    {
+        return name;
+    }
+
 };
 
 #endif
