@@ -1,3 +1,6 @@
+#ifndef BATTLESHIP_CPP
+#define BATTLESHIP_CPP
+
 #include <iostream>
 
 class battleship
@@ -7,3 +10,5 @@ class battleship
     public:
     
 };
+
+#endif
