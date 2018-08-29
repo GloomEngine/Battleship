@@ -5,7 +5,7 @@ using namespace std;
 
 void setname(battleship*, int);
 void playgame();
-int quit();
+int play();
 
 int main(void)
 {
@@ -20,7 +20,7 @@ int main(void)
 
         playgame();
 
-    }while (!quit());
+    }while (play());
 
 }
 
@@ -61,7 +61,7 @@ void playgame()
 
 }
 
-int quit()
+int play()
 {
-    return 0;
+    return 1;
 }
