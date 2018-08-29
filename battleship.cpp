@@ -4,6 +4,8 @@
 using namespace std;
 
 void setname(battleship*, int);
+void playgame();
+int quit();
 
 int main(void)
 {
@@ -13,6 +15,12 @@ int main(void)
     battleship *player_pointer = player;
 
     setname(player_pointer, player_count);
+
+    do{
+
+        playgame();
+
+    }while (!quit());
 
 }
 
@@ -46,4 +54,14 @@ void setname(battleship *player, int size)
     }
     
     
+}
+
+void playgame()
+{
+
+}
+
+int quit()
+{
+    return 0;
 }
