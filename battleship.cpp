@@ -6,6 +6,7 @@ using namespace std;
 void setname(battleship*, int);
 void playgame();
 int play();
+void position_ships();
 
 int main(void)
 {
@@ -49,19 +50,25 @@ void setname(battleship *player, int size)
             getline(cin, name);
         }
 
-        player[x].setname(name);
+        player[x].setplayername(name);
         cout << endl;
     }
     
+    system("cls");
     
 }
 
 void playgame()
 {
-
+    position_ships();
 }
 
 int play()
 {
     return 1;
+}
+
+void position_ships()
+{
+
 }

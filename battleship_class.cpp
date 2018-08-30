@@ -9,18 +9,27 @@ class battleship
 {
 
   private:
-    string name;
+    string player_name;
+
+    struct ship_info
+    {
+        int size = 2, *position = new int[size];
+
+        string ship_name;
+    };
+
+    ship_info *ships = new ship_info[5];
 
   public:
   
-    void setname(string n)
+    void setplayername(string n)
     {
-        name = n;
+        player_name = n;
     }
 
-    string getname()
+    string getplayername()
     {
-        return name;
+        return player_name;
     }
 
 };
