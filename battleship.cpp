@@ -4,14 +4,13 @@
 using namespace std;
 
 void setname(battleship*, int);
-void playgame();
+void playgame(battleship*, int);
 int play();
-void position_ships();
+void position_ships(battleship*, int);
 
 int main(void)
 {
-
-    size_t player_count = 2;
+    int player_count = 2;
     battleship player[2];
     battleship *player_pointer = player;
 
@@ -19,7 +18,7 @@ int main(void)
 
     do{
 
-        playgame();
+        playgame(player_pointer, player_count);
 
     }while (play());
 
@@ -58,17 +57,23 @@ void setname(battleship *player, int size)
     
 }
 
-void playgame()
+void playgame(battleship *player, int player_count)
 {
-    position_ships();
+    position_ships(player, player_count);
 }
 
 int play()
 {
-    return 1;
+    return 0;
 }
 
-void position_ships()
+void position_ships(battleship *player, int player_count)
 {
+    for(int x = 0; x < player_count; x++)
+    {
+        cout << player[!x].getplayername() << " look away while";
+        cout << player[x].getplayername() << " positions their ships";
+    }
 
+    getchar();
 }
