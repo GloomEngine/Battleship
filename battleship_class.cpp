@@ -19,6 +19,7 @@ class battleship
     };
 
     ship_info *ships = new ship_info[5];
+    int *ship_position = NULL, ship_spaces;
 
   public:
   
@@ -30,6 +31,30 @@ class battleship
     string getplayername()
     {
         return player_name;
+    }
+
+    void setship(int *pos, int ship_size, string ship_name)
+    {
+        if(ship_position == NULL)
+        {
+            ship_spaces = ship_size;
+            ship_position = new int[ship_spaces];
+        }
+
+        else
+        {
+            ship_spaces += ship_size;
+            int *temp = new int[ship_size];
+            memcpy(temp, ship_position, ship_spaces * sizeof(int));
+            ship_position = temp;
+            delete [] temp;
+        }
+
+        for(int x = 0; x < ship_size; x++)
+        {
+            ship_position[(ship_spaces-ship_size)+x] = pos[x];
+            cout << ship_position[x] << " ";
+        }
     }
 
 };
