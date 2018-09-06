@@ -69,30 +69,36 @@ int play()
 
 void position_ships(battleship *player, int player_count)
 {
-    /*for(int x = 0; x < player_count; x++)
+    string ship_names[] = {"Aircraft Carrier", "Battleship", "Cruiser", "Submarine", "Patrol Boat"};
+
+    for(int x = 0; x < player_count; x++)
     {
         cout << player[!x].getplayername() << " look away while";
         cout << player[x].getplayername() << " positions their ships";
+
+        system("cls");
+
+        for(int y = 0; y < 5; y++)
+        {
+
+            int number, char letter;
+
+            cout << "Enter starting position(Ex: A1): ";
+            cin >> letter >> number;
+
+            if(player[x].bad_ship_placement(letter, number))
+            {
+                cout << "Error: Invalid Position\n";
+                cout << "Enter starting position(Ex: A1): ";
+                cin >> letter >> number;
+            }
+
+        }
     }
 
-    getchar();*/
 
-    int test[2], si = 2;
-    int *point = test;
-    test[0] = 1;
-    test[1] = 2;
-
-    player[0].setship(test, si, "ship");
-
-    si = 4;
-
-    int t2est[4];
-    t2est[0] = 5;
-    t2est[1] = 7;
-    t2est[2] = 3;
-    t2est[3] = 9;
-
-    player[0].setship(t2est, si, "ship");
 
     getchar();
+
+
 }

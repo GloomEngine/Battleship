@@ -13,7 +13,7 @@ class battleship
 
     struct ship_info
     {
-        int size = 2, *position = new int[size];
+        int size, start;
 
         string ship_name;
     };
@@ -45,16 +45,22 @@ class battleship
         {
             ship_spaces += ship_size;
             int *temp = new int[ship_size];
-            memcpy(temp, ship_position, ship_spaces * sizeof(int));
+            
+            for(int x = 0; x < sizeof(ship_position)/sizeof(int); x++)
+                temp[x] = ship_position[x];
+            
+            delete [] ship_position;
             ship_position = temp;
-            delete [] temp;
         }
 
         for(int x = 0; x < ship_size; x++)
-        {
             ship_position[(ship_spaces-ship_size)+x] = pos[x];
-            cout << ship_position[x] << " ";
-        }
+
+    }
+
+    bool bad_ship_placement(char letter, int number)
+    {
+        return false;
     }
 
 };
