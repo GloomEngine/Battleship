@@ -81,7 +81,7 @@ void position_ships(battleship *player, int player_count)
         for(int y = 0; y < 5; y++)
         {
 
-            int number, char letter;
+            int number; char letter;
 
             cout << "Enter starting position(Ex: A1): ";
             cin >> letter >> number;
@@ -92,7 +92,6 @@ void position_ships(battleship *player, int player_count)
                 cout << "Enter starting position(Ex: A1): ";
                 cin >> letter >> number;
             }
-
         }
     }
 

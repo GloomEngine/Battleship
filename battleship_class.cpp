@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <iomanip>
 using namespace std;
 
 class battleship
@@ -60,6 +61,17 @@ class battleship
 
     bool bad_ship_placement(char letter, int number)
     {
+        if(!isalpha(letter))
+            return true;
+        
+        letter = toupper(letter);
+
+        if(letter < 'A' || letter > 'J')
+            return true;
+
+        if(number < 1 || number > 10)
+            return true;
+
         return false;
     }
 
