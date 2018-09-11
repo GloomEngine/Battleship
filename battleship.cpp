@@ -80,17 +80,36 @@ void position_ships(battleship *player, int player_count)
 
         for(int y = 0; y < 5; y++)
         {
-
-            int number; char letter;
+            string position;
 
             cout << "Enter starting position(Ex: A1): ";
-            cin >> letter >> number;
+            getline(cin, position);
 
-            if(player[x].bad_ship_placement(letter, number))
+            int bad_placement = player[x].bad_ship_placement(position);
+
+            while(bad_placement)
             {
-                cout << "Error: Invalid Position\n";
-                cout << "Enter starting position(Ex: A1): ";
-                cin >> letter >> number;
+                switch(bad_placement)
+                {
+                    case 1:
+                        cout << "Error: Expecting only a letter and number up to 10";
+                        break;
+
+                    case 2:
+                        cout << "Error: Expected a letter followed by a number";
+                        break;
+
+                    case 3:
+                        cout << "Error: Letter must be between A and J";
+                        break;
+
+                    case 4:
+                        cout << "Error: Number must be between 1 and 10";
+                }
+
+                cout << "\n\nEnter starting position(Ex: A1): ";
+                getline(cin, position);
+                bad_placement = player[x].bad_ship_placement(position);
             }
         }
     }
