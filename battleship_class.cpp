@@ -61,16 +61,23 @@ class battleship
 
     int bad_ship_placement(string position)
     {
+        if(position.length() < 2 || position.length() > 3)
+            return 1;
 
-        //TODO check for string length over and under 2
-        
         char letter = position.at(0);
-        int number = stoi(position.substr(1));
 
         if(!isalpha(letter))
             return 2;
         
         letter = toupper(letter);
+
+        for(int x = 1; x < position.length(); x++)
+        {
+            if(!isdigit(position.at(x)))
+                return 1;
+        }
+
+        int number = stoi(position.substr(1));
 
         if(letter < 'A' || letter > 'J')
             return 3;
