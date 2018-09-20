@@ -16,10 +16,12 @@ class battleship
     {
         int size, start;
 
-        string ship_name;
+        ship_info *next;
+
+        string name;
     };
 
-    ship_info *ships = new ship_info[5];
+    ship_info *ships = NULL, *rear = NULL;
     int *ship_position = NULL, ship_spaces;
 
   public:
@@ -36,6 +38,27 @@ class battleship
 
     void setship(int *pos, int ship_size, string ship_name)
     {
+        if(ships == NULL)
+        {
+            ships = new ship_info;
+            ships -> next = NULL;
+            ships -> start = ship_spaces;
+            ships -> size = ship_size;
+            ships -> name = ship_name;
+            rear = ships;
+        }
+
+        else
+        {
+            ship_info *temp = new ship_info;
+            temp -> next = NULL;
+            temp -> start = ship_spaces;
+            temp -> size = ship_size;
+            temp -> name = ship_name;
+            rear -> next = temp;
+            rear = temp;
+        }
+
         if(ship_position == NULL)
         {
             ship_spaces = ship_size;
@@ -85,6 +108,11 @@ class battleship
         if(number < 1 || number > 10)
             return 4;
 
+        return 0;
+    }
+
+    int* get_ship_positions(string position)
+    {
         return 0;
     }
 
