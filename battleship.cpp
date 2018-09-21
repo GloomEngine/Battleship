@@ -7,6 +7,7 @@ void setname(battleship*, int);
 void playgame(battleship*, int);
 int play();
 void position_ships(battleship*, int);
+void game_config();
 
 int main(void)
 {
@@ -59,6 +60,7 @@ void setname(battleship *player, int size)
 
 void playgame(battleship *player, int player_count)
 {
+    game_config();
     position_ships(player, player_count);
 }
 
@@ -69,7 +71,7 @@ int play()
 
 void position_ships(battleship *player, int player_count)
 {
-    string ship_names[] = {"Aircraft Carrier", "Battleship", "Cruiser", "Submarine", "Patrol Boat"};
+    string default_ship_names[] = {"Aircraft Carrier", "Battleship", "Cruiser", "Submarine", "Patrol Boat"};
 
     for(int x = 0; x < player_count; x++)
     {
@@ -114,9 +116,5 @@ void position_ships(battleship *player, int player_count)
         }
     }
 
-
-
     getchar();
-
-
 }
