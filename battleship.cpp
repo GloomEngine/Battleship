@@ -118,3 +118,8 @@ void position_ships(battleship *player, int player_count)
 
     getchar();
 }
+
+void game_config()
+{
+    cout << "Enter the number of ships you wish to use: (2-8): ";
+}
