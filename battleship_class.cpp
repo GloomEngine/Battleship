@@ -16,6 +16,8 @@ class battleship
     {
         int size, start;
 
+        bool bent;
+
         ship_info *next;
 
         string name;
@@ -36,7 +38,7 @@ class battleship
         return player_name;
     }
 
-    void setship(int *pos, int ship_size, string ship_name)
+    void setship(bool isbent, int ship_size, string ship_name, battleship *second)
     {
         if(ships == NULL)
         {
@@ -45,6 +47,7 @@ class battleship
             ships -> start = ship_spaces;
             ships -> size = ship_size;
             ships -> name = ship_name;
+            ships -> bent = isbent;
             rear = ships;
         }
 
@@ -55,11 +58,17 @@ class battleship
             temp -> start = ship_spaces;
             temp -> size = ship_size;
             temp -> name = ship_name;
+            temp -> bent = isbent;
             rear -> next = temp;
             rear = temp;
         }
+    }
 
-        if(ship_position == NULL)
+    void setposition()
+    {
+        //TODO loop through linked-list and set pos
+
+        /*if(ship_position == NULL)
         {
             ship_spaces = ship_size;
             ship_position = new int[ship_spaces];
@@ -75,11 +84,7 @@ class battleship
             
             delete [] ship_position;
             ship_position = temp;
-        }
-
-        for(int x = 0; x < ship_size; x++)
-            ship_position[(ship_spaces-ship_size)+x] = pos[x];
-
+        }*/
     }
 
     int bad_ship_placement(string position)

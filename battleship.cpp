@@ -121,5 +121,22 @@ void position_ships(battleship *player, int player_count)
 
 void game_config()
 {
+    int ship_count;
+    bool iselbow;
+    string ship_name;
+
     cout << "Enter the number of ships you wish to use: (2-8): ";
+    cin >> ship_count;
+
+    for(int x = 0; x < ship_count; x++)
+    {
+        cout << "Is ship bent? (0-1): ";
+
+        for(cin >> iselbow; !cin; cin>>iselbow)
+        {
+            cin.clear();
+            cout << "\nError: Expected 0 or 1\n";
+            cout << "Is ship bent?: ";
+        }
+    }
 }
