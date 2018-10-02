@@ -14,9 +14,7 @@ class battleship
 
     struct ship_info
     {
-        int size, start;
-
-        bool bent;
+        int size, *pos;
 
         ship_info *next;
 
@@ -44,10 +42,9 @@ class battleship
         {
             ships = new ship_info;
             ships -> next = NULL;
-            ships -> start = ship_spaces;
+            ships -> pos = new int[ship_size*2];
             ships -> size = ship_size;
             ships -> name = ship_name;
-            ships -> bent = isbent;
             rear = ships;
         }
 
@@ -55,10 +52,9 @@ class battleship
         {
             ship_info *temp = new ship_info;
             temp -> next = NULL;
-            temp -> start = ship_spaces;
+            temp -> pos = new int[ship_size*2];
             temp -> size = ship_size;
             temp -> name = ship_name;
-            temp -> bent = isbent;
             rear -> next = temp;
             rear = temp;
         }
@@ -114,6 +110,9 @@ class battleship
             return 4;
 
         return 0;
+
+        //TODO check if ship position is taken
+        //also check if can place available spaces
     }
 
     int* get_ship_positions(string position)

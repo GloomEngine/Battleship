@@ -42,11 +42,13 @@ void setname(battleship *player, int size)
                 cout << "\nError: Name cannot be empty\n";
                 cout << "Enter Player[" << x + 1 << "] name: ";
             }
+
             else
             {
                 cout << "\nError: Name must start with a letter\n";
                 cout << "Enter Player[" << x + 1 << "] name: ";
             }
+
             getline(cin, name);
         }
 
@@ -121,22 +123,62 @@ void position_ships(battleship *player, int player_count)
 
 void game_config()
 {
-    int ship_count;
-    bool iselbow;
+    int ship_count, ship_size;
     string ship_name;
 
-    cout << "Enter the number of ships you wish to use: (2-8): ";
-    cin >> ship_count;
+    cout << "Enter the number of ships you wish to use (2-8): ";
+
+    for(cin >> ship_count; !cin; cin>>ship_count)
+    {
+        cin.clear();
+        cin.ignore();
+        cout << "\nError: Ammount must be between 2 and 8\n";
+        cout << "Enter the number of ships you wish to use (2-8): ";
+    }
+
+    cout << endl;
 
     for(int x = 0; x < ship_count; x++)
     {
-        cout << "Is ship bent? (0-1): ";
+        cin.ignore();
+        cout << "Enter a name for ship " << x+1 << ": ";
+        getline(cin, ship_name);
 
-        for(cin >> iselbow; !cin; cin>>iselbow)
+        while(ship_name.empty() || !isalpha(ship_name.at(0)))
+        {
+            if(ship_name.empty())
+            {
+                cout << "\nError: ship name cannot be empty\n";
+                cout << "Enter a name for ship " << x+1 << ": ";
+            }
+
+            else
+            {
+                cout << "\nError: ship_name must start with a letter\n";
+                cout << "Enter a name for ship " << x+1 << ": ";
+            }
+
+            getline(cin, ship_name);
+        }
+
+        cin.ignore();
+        cout << "Enter ship size: ";
+
+        for(cin >> ship_size; !cin; cin>>ship_size)
         {
             cin.clear();
+            cin.ignore();
             cout << "\nError: Expected 0 or 1\n";
-            cout << "Is ship bent?: ";
+            cout << "Enter ship size: ";
         }
+
+        while(ship_size < 2 && ship_size > 8)
+        {
+            cout << "\nError: Size must be between 2 and 8\n";
+            cout << "Enter ship size: ";
+            cin >> ship_size;
+        }
+
+        cout << endl;
     }
 }
