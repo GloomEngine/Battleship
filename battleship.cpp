@@ -3,66 +3,30 @@
 #include "battleship_class.cpp"
 using namespace std;
 
-void setname(battleship*, int);
-void playgame(battleship*, int);
+void setname(battleship *[], int);
+void playgame(battleship *[], int);
 int play();
-void position_ships(battleship*, int);
-void game_config();
+void position_ships(battleship *[], int);
+void game_config(battleship *[]);
 
 int main(void)
 {
     int player_count = 2;
-    battleship player[2];
-    battleship *player_pointer = player;
+    battleship *player[2];
 
-    setname(player_pointer, player_count);
+    player[0] = new battleship;
+    player[1] = new battleship;
 
     do{
-
-        playgame(player_pointer, player_count);
+        playgame(player, player_count);
 
     }while (play());
 
 }
 
-void setname(battleship *player, int size)
+void playgame(battleship *player[], int player_count)
 {
-
-    string name;    
-    
-    for(int x = 0; x < size; x++)
-    {
-        cout << "Enter Player[" << x + 1 << "] name: ";
-        getline(cin, name);
-        
-        while(name.empty() || !isalpha(name.at(0)))
-        {
-            if(name.empty())
-            {
-                cout << "\nError: Name cannot be empty\n";
-                cout << "Enter Player[" << x + 1 << "] name: ";
-            }
-
-            else
-            {
-                cout << "\nError: Name must start with a letter\n";
-                cout << "Enter Player[" << x + 1 << "] name: ";
-            }
-
-            getline(cin, name);
-        }
-
-        player[x].setplayername(name);
-        cout << endl;
-    }
-    
-    system("cls");
-    
-}
-
-void playgame(battleship *player, int player_count)
-{
-    game_config();
+    game_config(player);
     position_ships(player, player_count);
 }
 
@@ -71,14 +35,14 @@ int play()
     return 0;
 }
 
-void position_ships(battleship *player, int player_count)
+void position_ships(battleship *player[], int player_count)
 {
     string default_ship_names[] = {"Aircraft Carrier", "Battleship", "Cruiser", "Submarine", "Patrol Boat"};
 
     for(int x = 0; x < player_count; x++)
     {
-        cout << player[!x].getplayername() << " look away while";
-        cout << player[x].getplayername() << " positions their ships";
+        cout << player[!x]->getplayername() << " look away while";
+        cout << player[x]->getplayername() << " positions their ships";
 
         system("cls");
 
@@ -89,7 +53,7 @@ void position_ships(battleship *player, int player_count)
             cout << "Enter starting position(Ex: A1): ";
             getline(cin, position);
 
-            int bad_placement = player[x].bad_ship_placement(position);
+            int bad_placement = player[x]->bad_ship_placement(position);
 
             while(bad_placement)
             {
@@ -113,7 +77,7 @@ void position_ships(battleship *player, int player_count)
 
                 cout << "\n\nEnter starting position(Ex: A1): ";
                 getline(cin, position);
-                bad_placement = player[x].bad_ship_placement(position);
+                bad_placement = player[x]->bad_ship_placement(position);
             }
         }
     }
@@ -121,7 +85,7 @@ void position_ships(battleship *player, int player_count)
     getchar();
 }
 
-void game_config()
+void game_config(battleship *player[])
 {
     int ship_count, ship_size;
     string ship_name;
@@ -161,7 +125,6 @@ void game_config()
             getline(cin, ship_name);
         }
 
-        cin.ignore();
         cout << "Enter ship size: ";
 
         for(cin >> ship_size; !cin; cin>>ship_size)
@@ -180,5 +143,16 @@ void game_config()
         }
 
         cout << endl;
+
+        player[0]->setship(ship_size, ship_name, player[1]);
     }
+
+    system("cls");
+
+    for(int x = 0; x < ship_count; x++)
+    {
+        cout << player[1] -> getshipname(x) << endl;
+    }
+
+    system("pause");
 }
