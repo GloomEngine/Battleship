@@ -22,7 +22,7 @@ class battleship
         };
 
         ship_info *ships = NULL, *rear = NULL;
-        int num_ship;
+        int num_ship = 0;
 
     public:
 
@@ -64,6 +64,11 @@ class battleship
             return player_name;
         }
 
+        int getnumships()
+        {
+            return num_ship;
+        }
+
         void setship(int ship_size, string ship_name, battleship *second)
         {
             if(ships == NULL)
@@ -89,11 +94,12 @@ class battleship
                 second -> rear = temp;
                 rear = temp;
                 second -> rear = rear;
-                
             }
+
+            num_ship++;
         }
 
-        void setposition()
+        void setposition(int *position, int size, int ship_num)
         {
             //TODO loop through linked-list and set pos
 
@@ -114,6 +120,39 @@ class battleship
                 delete [] ship_position;
                 ship_position = temp;
             }*/
+
+            ship_info *temp = ships;
+
+            for(int x = 0; x < ship_num; x++)
+            {
+                if(temp->next != NULL)
+                    temp = temp->next;
+            }
+
+            for(int x = 0; x < size*2; x++)
+            {
+                temp->pos[x] = position[x];
+            }
+        }
+
+        string find_direction(int *pos, int ship_num)
+        {
+            int ship_length = getshipspaces(ship_num);
+            string dir = "";
+
+            if(pos[1]+5 < 10)
+                dir += "r";
+
+            if(pos[1]-5 >= 0)
+                dir += "l";
+
+            if(pos[0]-5 >= 0)
+                dir += "u";
+
+            if(pos[0]+5 < 10)
+                dir += "d";
+
+            return dir;
         }
 
         int bad_ship_placement(string position)
@@ -165,6 +204,20 @@ class battleship
             }
 
             return temp->name;
+        }
+
+        int getshipspaces(int ship_number)
+        {
+            ship_info *temp = ships;
+
+            for(int x = 0; x < ship_number; x++)
+            {
+                if(temp -> next != NULL)
+                    temp = temp -> next;
+
+            }
+
+            return temp->size;
         }
 
 };

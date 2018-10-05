@@ -3,7 +3,6 @@
 #include "battleship_class.cpp"
 using namespace std;
 
-void setname(battleship *[], int);
 void playgame(battleship *[], int);
 int play();
 void position_ships(battleship *[], int);
@@ -26,7 +25,7 @@ int main(void)
 
 void playgame(battleship *player[], int player_count)
 {
-    game_config(player);
+    //game_config(player);
     position_ships(player, player_count);
 }
 
@@ -37,7 +36,14 @@ int play()
 
 void position_ships(battleship *player[], int player_count)
 {
-    string default_ship_names[] = {"Aircraft Carrier", "Battleship", "Cruiser", "Submarine", "Patrol Boat"};
+    string default_ship_names[5] = {"Aircraft Carrier", "Battleship", "Cruiser", "Submarine", "Patrol Boat"};
+    string direction;
+    int default_ship_size[5] = {5, 4, 3, 3, 2};
+
+    for(int x = 0; x < 5; x++)
+    {
+        player[0]->setship(default_ship_size[x], default_ship_names[x], player[1]);
+    }
 
     for(int x = 0; x < player_count; x++)
     {
@@ -46,9 +52,11 @@ void position_ships(battleship *player[], int player_count)
 
         system("cls");
 
-        for(int y = 0; y < 5; y++)
+        for(int y = 0; y < player[0]->getnumships(); y++)
         {
             string position;
+
+            int *pos = new int[2];
 
             cout << "Enter starting position(Ex: A1): ";
             getline(cin, position);
@@ -79,9 +87,16 @@ void position_ships(battleship *player[], int player_count)
                 getline(cin, position);
                 bad_placement = player[x]->bad_ship_placement(position);
             }
+            
+            pos[0] = toupper(position.at(0))-65;
+            pos[1] = position.at(1) - 49;
+
+            direction = player[x]->find_direction(pos, y);
+
+            cout << direction << endl;
         }
     }
-
+    cin.ignore();
     getchar();
 }
 
