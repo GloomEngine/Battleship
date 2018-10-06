@@ -22,7 +22,7 @@ class battleship
         };
 
         ship_info *ships = NULL, *rear = NULL;
-        int num_ship = 0;
+        int num_ship = 0, *master_ship_pos;
 
     public:
 
@@ -99,28 +99,9 @@ class battleship
             num_ship++;
         }
 
-        void setposition(int *position, int size, int ship_num)
+        void setposition(int *position, int ship_num, char dir)
         {
-            //TODO loop through linked-list and set pos
-
-            /*if(ship_position == NULL)
-            {
-                ship_spaces = ship_size;
-                ship_position = new int[ship_spaces];
-            }
-
-            else
-            {
-                ship_spaces += ship_size;
-                int *temp = new int[ship_size];
-                
-                for(int x = 0; x < sizeof(ship_position)/sizeof(int); x++)
-                    temp[x] = ship_position[x];
-                
-                delete [] ship_position;
-                ship_position = temp;
-            }*/
-
+            int ship_length = getshipspaces(ship_num);
             ship_info *temp = ships;
 
             for(int x = 0; x < ship_num; x++)
@@ -129,9 +110,53 @@ class battleship
                     temp = temp->next;
             }
 
-            for(int x = 0; x < size*2; x++)
+            temp->pos = new int[10];
+
+            temp->pos[0] = position[0];
+            temp->pos[1] = position[1];
+
+            switch(dir)
             {
-                temp->pos[x] = position[x];
+
+                case 'r':
+
+                    for(int x = 2; x < ship_length*2; x+=2)
+                    {
+                        temp->pos[x] = position[0];
+                        temp->pos[x+1] = temp->pos[x-1] + 1;
+                    } 
+
+                    break;
+
+                case 'l':
+
+                    for(int x = 2; x < ship_length*2; x+=2)
+                    {
+                        temp->pos[x] = position[0];
+                        temp->pos[x+1] = temp->pos[x-1] - 1;
+                    } 
+
+                    break;
+
+                case 'u':
+
+                    for(int x = 2; x < ship_length*2; x+=2)
+                    {
+                        temp->pos[x] = temp->pos[x-2] - 1;
+                        temp->pos[x+1] = position[1];
+                    } 
+
+                    break;
+
+                case 'd':
+
+                    for(int x = 2; x < ship_length*2; x+=2)
+                    {
+                        temp->pos[x] = temp->pos[x-2] + 1;
+                        temp->pos[x+1] = position[1];
+                    } 
+
+                    break;
             }
         }
 
@@ -140,16 +165,16 @@ class battleship
             int ship_length = getshipspaces(ship_num);
             string dir = "";
 
-            if(pos[1]+5 < 10)
+            if(pos[1]+ship_length < 10)
                 dir += "r";
 
-            if(pos[1]-5 >= 0)
+            if(pos[1]-ship_length >= 0)
                 dir += "l";
 
-            if(pos[0]-5 >= 0)
+            if(pos[0]-ship_length >= 0)
                 dir += "u";
 
-            if(pos[0]+5 < 10)
+            if(pos[0]+ship_length < 10)
                 dir += "d";
 
             return dir;

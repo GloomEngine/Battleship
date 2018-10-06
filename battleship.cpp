@@ -37,8 +37,8 @@ int play()
 void position_ships(battleship *player[], int player_count)
 {
     string default_ship_names[5] = {"Aircraft Carrier", "Battleship", "Cruiser", "Submarine", "Patrol Boat"};
-    string direction;
-    int default_ship_size[5] = {5, 4, 3, 3, 2};
+    string direction; char dir;
+    int default_ship_size[5] = {2, 4, 3, 3, 2};
 
     for(int x = 0; x < 5; x++)
     {
@@ -47,9 +47,10 @@ void position_ships(battleship *player[], int player_count)
 
     for(int x = 0; x < player_count; x++)
     {
-        cout << player[!x]->getplayername() << " look away while";
+        cout << player[!x]->getplayername() << " look away while ";
         cout << player[x]->getplayername() << " positions their ships";
 
+        getchar();
         system("cls");
 
         for(int y = 0; y < player[0]->getnumships(); y++)
@@ -93,11 +94,22 @@ void position_ships(battleship *player[], int player_count)
 
             direction = player[x]->find_direction(pos, y);
 
-            cout << direction << endl;
+            cout << "Enter Direction (" << direction << "): ";
+            cin >> dir;
+
+            while(direction.find(dir) == string::npos)
+            {
+                cout << "\nError: Must enter given direction\n";
+                cout << "Enter Direction (" << direction << "): ";
+                cin >> dir;
+            }
+
+            player[x]->setposition(pos, y, dir);
+
+            cin.ignore();
+            cout << endl;
         }
     }
-    cin.ignore();
-    getchar();
 }
 
 void game_config(battleship *player[])
