@@ -38,7 +38,7 @@ void position_ships(battleship *player[], int player_count)
 {
     string default_ship_names[5] = {"Aircraft Carrier", "Battleship", "Cruiser", "Submarine", "Patrol Boat"};
     string direction; char dir;
-    int default_ship_size[5] = {2, 4, 3, 3, 2};
+    int default_ship_size[5] = {5, 4, 3, 3, 2};
 
     for(int x = 0; x < 5; x++)
     {
@@ -178,7 +178,7 @@ void game_config(battleship *player[])
 
     for(int x = 0; x < ship_count; x++)
     {
-        cout << player[1] -> getshipname(x) << endl;
+        cout << player[1] -> get_ship_info(x)->name << endl;
     }
 
     system("pause");

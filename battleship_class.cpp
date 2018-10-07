@@ -4,11 +4,11 @@
 #include <iostream>
 #include <string>
 #include <iomanip>
+#include <vector>
 using namespace std;
 
 class battleship
 {
-
     private:
         string player_name;
 
@@ -22,7 +22,8 @@ class battleship
         };
 
         ship_info *ships = NULL, *rear = NULL;
-        int num_ship = 0, *master_ship_pos;
+        int num_ship = 0;
+        vector <int> master_ship_pos;
 
     public:
 
@@ -101,7 +102,7 @@ class battleship
 
         void setposition(int *position, int ship_num, char dir)
         {
-            int ship_length = getshipspaces(ship_num);
+            int ship_length = get_ship_info(ship_num)->size;
             ship_info *temp = ships;
 
             for(int x = 0; x < ship_num; x++)
@@ -113,11 +114,10 @@ class battleship
             temp->pos = new int[10];
 
             temp->pos[0] = position[0];
-            temp->pos[1] = position[1];
+            temp->pos[1] = position[1]; 
 
             switch(dir)
             {
-
                 case 'r':
 
                     for(int x = 2; x < ship_length*2; x+=2)
@@ -158,11 +158,13 @@ class battleship
 
                     break;
             }
+
+            add_master_pos(ship_num);
         }
 
         string find_direction(int *pos, int ship_num)
         {
-            int ship_length = getshipspaces(ship_num);
+            int ship_length = get_ship_info(ship_num)->size;
             string dir = "";
 
             if(pos[1]+ship_length < 10)
@@ -212,12 +214,12 @@ class battleship
             //also check if can place available spaces
         }
 
-        int* get_ship_positions(string position)
+        int *get_ship_positions(string position)
         {
             return 0;
         }
 
-        string getshipname(int ship_number)
+        ship_info *get_ship_info(int ship_number)
         {
             ship_info *temp = ships;
 
@@ -228,23 +230,29 @@ class battleship
 
             }
 
-            return temp->name;
+            return temp;
         }
 
-        int getshipspaces(int ship_number)
+        void add_master_pos(int ship_num)
         {
-            ship_info *temp = ships;
+            ship_info *temp = get_ship_info(ship_num);
 
-            for(int x = 0; x < ship_number; x++)
+            for(int x = 0; x < temp->size*2; x+=2)
             {
-                if(temp -> next != NULL)
-                    temp = temp -> next;
-
+                master_ship_pos.push_back(convert(temp->pos[x], temp->pos[x+1]));
             }
-
-            return temp->size;
         }
 
+        int convert(int row, int col)
+        {
+            if(row == 0)
+                return col;
+            
+            if(col == 0)
+                return row * 10;
+
+            return (row*10) + col;
+        }
 };
 
 #endif
