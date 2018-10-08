@@ -102,16 +102,10 @@ class battleship
 
         void setposition(int *position, int ship_num, char dir)
         {
-            int ship_length = get_ship_info(ship_num)->size;
-            ship_info *temp = ships;
+            ship_info *temp = get_ship_info(ship_num);
+            int ship_length = temp->size;
 
-            for(int x = 0; x < ship_num; x++)
-            {
-                if(temp->next != NULL)
-                    temp = temp->next;
-            }
-
-            temp->pos = new int[10];
+            temp->pos = new int[ship_length*2];
 
             temp->pos[0] = position[0];
             temp->pos[1] = position[1]; 
@@ -208,14 +202,14 @@ class battleship
             if(number < 1 || number > 10)
                 return 4;
 
-            return 0;
+            int temp = convert(toupper(position.at(0))-65, position.at(1) - 49);
 
-            //TODO check if ship position is taken
-            //also check if can place available spaces
-        }
+            for(auto &x : master_ship_pos)
+            {
+                if (x == temp)
+                    return 5;
+            }
 
-        int *get_ship_positions(string position)
-        {
             return 0;
         }
 
@@ -227,7 +221,6 @@ class battleship
             {
                 if(temp -> next != NULL)
                     temp = temp -> next;
-
             }
 
             return temp;
@@ -238,9 +231,7 @@ class battleship
             ship_info *temp = get_ship_info(ship_num);
 
             for(int x = 0; x < temp->size*2; x+=2)
-            {
                 master_ship_pos.push_back(convert(temp->pos[x], temp->pos[x+1]));
-            }
         }
 
         int convert(int row, int col)
