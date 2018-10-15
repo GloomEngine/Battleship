@@ -59,35 +59,7 @@ void position_ships(battleship *player[], int player_count)
 
             int *pos = new int[2];
 
-            cout << "Enter starting position(Ex: A1): ";
-            getline(cin, position);
-
-            int bad_placement = player[x]->bad_ship_placement(position);
-
-            while(bad_placement)
-            {
-                switch(bad_placement)
-                {
-                    case 1:
-                        cout << "Error: Expecting only a letter and number up to 10";
-                        break;
-
-                    case 2:
-                        cout << "Error: Expected a letter followed by a number";
-                        break;
-
-                    case 3:
-                        cout << "Error: Letter must be between A and J";
-                        break;
-
-                    case 4:
-                        cout << "Error: Number must be between 1 and 10";
-                }
-
-                cout << "\n\nEnter starting position(Ex: A1): ";
-                getline(cin, position);
-                bad_placement = player[x]->bad_ship_placement(position);
-            }
+            player[x]->setstartingposition();
             
             pos[0] = toupper(position.at(0))-65;
             pos[1] = position.at(1) - 49;
@@ -96,6 +68,12 @@ void position_ships(battleship *player[], int player_count)
 
             cout << "Enter Direction (" << direction << "): ";
             cin >> dir;
+
+            while(direction.empty())
+            {
+                cout << "\nError: Not enough space to place ship at given position";
+                cout << "";
+            }
 
             while(direction.find(dir) == string::npos)
             {

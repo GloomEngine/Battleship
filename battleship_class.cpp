@@ -60,6 +60,23 @@ class battleship
             cout << endl;
         }
 
+        void setstartingposition()
+        {
+            string position;
+
+            int *pos = new int[2];
+
+            cout << "Enter starting position(Ex: A1): ";
+            getline(cin, position);
+
+            while(bad_ship_placement(position))
+            {
+                cout << "\n\nEnter starting position(Ex: A1): ";
+                getline(cin, position);
+                bad_ship_placement(position);
+            }
+        }
+
         string getplayername()
         {
             return player_name;
@@ -162,10 +179,46 @@ class battleship
             string dir = "";
 
             if(pos[1]+ship_length < 10)
-                dir += "r";
+            {
+                if(master_ship_pos.empty())
+                    dir += "r";
+
+                else
+                {
+                    int start = convert(pos[0], pos[1]);
+                    int finish = convert(pos[0], pos[1]+ship_length);
+
+                    for(int x = 0; x < master_ship_pos.size(); x++)
+                    {
+                        if(master_ship_pos[x] > start && master_ship_pos[x] < finish)
+                            break;
+
+                        else if(x == master_ship_pos.size()-1)
+                            dir += "r";
+                    }
+                }
+            }
 
             if(pos[1]-ship_length >= 0)
-                dir += "l";
+            {
+                if(master_ship_pos.empty())
+                    dir += "l";
+
+                else
+                {
+                    int start = convert(pos[0], pos[1]);
+                    int finish = convert(pos[0], pos[1]-ship_length);
+
+                    for(int x = 0; x < master_ship_pos.size(); x++)
+                    {
+                        if(master_ship_pos[x] > start && master_ship_pos[x] < finish)
+                            break;
+
+                        else if(x == master_ship_pos.size()-1)
+                            dir += "l";
+                    }
+                }
+            }
 
             if(pos[0]-ship_length >= 0)
                 dir += "u";
@@ -176,41 +229,56 @@ class battleship
             return dir;
         }
 
-        int bad_ship_placement(string position)
+        bool bad_ship_placement(string position)
         {
             if(position.length() < 2 || position.length() > 3)
-                return 1;
+            {
+                cout << "Error: Expecting only a letter and number up to 10";
+                return true;
+            }
 
             char letter = position.at(0);
 
             if(!isalpha(letter))
-                return 2;
+            {
+                cout << "Error: Expected a letter followed by a number";
+                return true;
+            }
             
             letter = toupper(letter);
 
             for(int x = 1; x < position.length(); x++)
             {
                 if(!isdigit(position.at(x)))
-                    return 1;
+                {
+                    cout << "Error: Expecting only a letter and number up to 10";
+                    return true;
+                }
             }
 
             int number = stoi(position.substr(1));
 
             if(letter < 'A' || letter > 'J')
-                return 3;
+            {
+                cout << "Error: Letter must be between A and J";
+                return true;
+            }
 
             if(number < 1 || number > 10)
-                return 4;
+            {
+                cout << "Error: Number must be between 1 and 10";
+                return true;
+            }
 
             int temp = convert(toupper(position.at(0))-65, position.at(1) - 49);
 
             for(auto &x : master_ship_pos)
             {
                 if (x == temp)
-                    return 5;
+                    return true;
             }
 
-            return 0;
+            return false;
         }
 
         ship_info *get_ship_info(int ship_number)
