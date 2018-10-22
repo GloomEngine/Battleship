@@ -59,30 +59,9 @@ void position_ships(battleship *player[], int player_count)
 
             int *pos = new int[2];
 
-            player[x]->setstartingposition();
+            player[x]->set_position(y);
+
             
-            pos[0] = toupper(position.at(0))-65;
-            pos[1] = position.at(1) - 49;
-
-            direction = player[x]->find_direction(pos, y);
-
-            cout << "Enter Direction (" << direction << "): ";
-            cin >> dir;
-
-            while(direction.empty())
-            {
-                cout << "\nError: Not enough space to place ship at given position";
-                cout << "";
-            }
-
-            while(direction.find(dir) == string::npos)
-            {
-                cout << "\nError: Must enter given direction\n";
-                cout << "Enter Direction (" << direction << "): ";
-                cin >> dir;
-            }
-
-            player[x]->setposition(pos, y, dir);
 
             cin.ignore();
             cout << endl;

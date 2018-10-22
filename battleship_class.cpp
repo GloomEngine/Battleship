@@ -60,11 +60,9 @@ class battleship
             cout << endl;
         }
 
-        void setstartingposition()
+        int setstartingposition()
         {
             string position;
-
-            int *pos = new int[2];
 
             cout << "Enter starting position(Ex: A1): ";
             getline(cin, position);
@@ -75,6 +73,8 @@ class battleship
                 getline(cin, position);
                 bad_ship_placement(position);
             }
+
+            return convert(position);
         }
 
         string getplayername()
@@ -117,55 +117,48 @@ class battleship
             num_ship++;
         }
 
-        void setposition(int *position, int ship_num, char dir)
+        void set_position(int ship_num)
         {
+            int position = setstartingposition();
+            char dir = find_direction(position, ship_num);
+
             ship_info *temp = get_ship_info(ship_num);
             int ship_length = temp->size;
 
-            temp->pos = new int[ship_length*2];
+            temp->pos = new int[ship_length];
 
-            temp->pos[0] = position[0];
-            temp->pos[1] = position[1]; 
+            temp->pos[0] = position; 
 
             switch(dir)
             {
                 case 'r':
 
-                    for(int x = 2; x < ship_length*2; x+=2)
+                    for(int x = 1; x < ship_length; x++)
                     {
-                        temp->pos[x] = position[0];
-                        temp->pos[x+1] = temp->pos[x-1] + 1;
+                        temp->pos[x] = temp->pos[x-1]+1;
+                        cout << temp->pos[x] << " ";
                     } 
 
                     break;
 
                 case 'l':
 
-                    for(int x = 2; x < ship_length*2; x+=2)
-                    {
-                        temp->pos[x] = position[0];
-                        temp->pos[x+1] = temp->pos[x-1] - 1;
-                    } 
+                    for(int x = 1; x < ship_length; x++)
+                        temp->pos[x] = temp->pos[x-1]-1;
 
                     break;
 
                 case 'u':
 
-                    for(int x = 2; x < ship_length*2; x+=2)
-                    {
-                        temp->pos[x] = temp->pos[x-2] - 1;
-                        temp->pos[x+1] = position[1];
-                    } 
+                    for(int x = 1; x < ship_length; x++)
+                        temp->pos[x] = temp->pos[x-1]-10; 
 
                     break;
 
                 case 'd':
 
-                    for(int x = 2; x < ship_length*2; x+=2)
-                    {
-                        temp->pos[x] = temp->pos[x-2] + 1;
-                        temp->pos[x+1] = position[1];
-                    } 
+                    for(int x = 1; x < ship_length; x++)
+                        temp->pos[x] = temp->pos[x-1]+10; 
 
                     break;
             }
@@ -173,10 +166,12 @@ class battleship
             add_master_pos(ship_num);
         }
 
-        string find_direction(int *pos, int ship_num)
+        char find_direction(int position, int ship_num)
         {
             int ship_length = get_ship_info(ship_num)->size;
             string dir = "";
+
+            int *pos = convert(position);
 
             if(pos[1]+ship_length < 10)
             {
@@ -226,7 +221,25 @@ class battleship
             if(pos[0]+ship_length < 10)
                 dir += "d";
 
-            return dir;
+            char direction;
+
+            cout << "Enter Direction (" << dir << "): ";
+            cin >> direction;
+
+            while(dir.empty())
+            {
+                cout << "\nError: Not enough space to place ship at given position";
+                cout << "";
+            }
+
+            while(dir.find(direction) == string::npos)
+            {
+                cout << "\nError: Must enter given direction\n";
+                cout << "Enter Direction (" << dir << "): ";
+                cin >> direction;
+            }
+
+            return direction;
         }
 
         bool bad_ship_placement(string position)
@@ -298,8 +311,13 @@ class battleship
         {
             ship_info *temp = get_ship_info(ship_num);
 
-            for(int x = 0; x < temp->size*2; x+=2)
-                master_ship_pos.push_back(convert(temp->pos[x], temp->pos[x+1]));
+            for(int x = 0; x < temp->size; x++)
+                master_ship_pos.push_back(temp->pos[x]);
+        }
+
+        int convert(string position)
+        {
+            return convert(toupper(position.at(0))-65, position.at(1) - 49);
         }
 
         int convert(int row, int col)
@@ -311,6 +329,16 @@ class battleship
                 return row * 10;
 
             return (row*10) + col;
+        }
+
+        int *convert(int position)
+        {
+            int *pos = new int[2];
+
+            pos[1] = (position % 10);
+            pos[0] = (position/10) % 10;
+
+            return pos;
         }
 };
 
