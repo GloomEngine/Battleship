@@ -9,337 +9,338 @@ using namespace std;
 
 class battleship
 {
-    private:
-        string player_name;
+    
+private:
+    string player_name;
 
-        struct ship_info
+    struct ship_info
+    {
+        int size, *pos;
+
+        ship_info *next;
+
+        string name;
+    };
+
+    ship_info *ships = NULL, *rear = NULL;
+    int num_ship = 0;
+    vector <int> master_ship_pos;
+
+public:
+
+    battleship()
+    {
+        setplayername();
+    }
+
+    void setplayername()
+    {
+        string name;   
+
+        cout << "Enter Player name: ";
+        getline(cin, name);
+        
+        while(name.empty() || !isalpha(name.at(0)))
         {
-            int size, *pos;
-
-            ship_info *next;
-
-            string name;
-        };
-
-        ship_info *ships = NULL, *rear = NULL;
-        int num_ship = 0;
-        vector <int> master_ship_pos;
-
-    public:
-
-        battleship()
-        {
-            setplayername();
-        }
-
-        void setplayername()
-        {
-            string name;   
-
-            cout << "Enter Player name: ";
-            getline(cin, name);
-            
-            while(name.empty() || !isalpha(name.at(0)))
+            if(name.empty())
             {
-                if(name.empty())
-                {
-                    cout << "\nError: Name cannot be empty\n";
-                    cout << "Enter Player name: ";
-                }
-
-                else
-                {
-                    cout << "\nError: Name must start with a letter\n";
-                    cout << "Enter Player name: ";
-                }
-
-                getline(cin, name);
-            }
-
-            player_name = name;
-            cout << endl;
-        }
-
-        int setstartingposition()
-        {
-            string position;
-
-            cout << "Enter starting position(Ex: A1): ";
-            getline(cin, position);
-
-            while(bad_ship_placement(position))
-            {
-                cout << "\n\nEnter starting position(Ex: A1): ";
-                getline(cin, position);
-                bad_ship_placement(position);
-            }
-
-            return convert(position);
-        }
-
-        string getplayername()
-        {
-            return player_name;
-        }
-
-        int getnumships()
-        {
-            return num_ship;
-        }
-
-        void setship(int ship_size, string ship_name, battleship *second)
-        {
-            if(ships == NULL)
-            {
-                ships = new ship_info;
-                ships -> next = NULL;
-                ships -> pos = new int[ship_size*2];
-                ships -> size = ship_size;
-                ships -> name = ship_name;
-                rear = ships;
-                second -> ships = ships;
-                second -> rear = ships;
+                cout << "\nError: Name cannot be empty\n";
+                cout << "Enter Player name: ";
             }
 
             else
             {
-                ship_info *temp = new ship_info;
-                temp -> next = NULL;
-                temp -> pos = new int[ship_size*2];
-                temp -> size = ship_size;
-                temp -> name = ship_name;
-                rear -> next = temp;
-                second -> rear = temp;
-                rear = temp;
-                second -> rear = rear;
+                cout << "\nError: Name must start with a letter\n";
+                cout << "Enter Player name: ";
             }
 
-            num_ship++;
+            getline(cin, name);
         }
 
-        void set_position(int ship_num)
+        player_name = name;
+        cout << endl;
+    }
+
+    int setstartingposition()
+    {
+        string position;
+
+        cout << "Enter starting position(Ex: A1): ";
+        getline(cin, position);
+
+        while(bad_ship_placement(position))
         {
-            int position = setstartingposition();
-            char dir = find_direction(position, ship_num);
-
-            ship_info *temp = get_ship_info(ship_num);
-            int ship_length = temp->size;
-
-            temp->pos = new int[ship_length];
-
-            temp->pos[0] = position; 
-
-            switch(dir)
-            {
-                case 'r':
-
-                    for(int x = 1; x < ship_length; x++)
-                    {
-                        temp->pos[x] = temp->pos[x-1]+1;
-                        cout << temp->pos[x] << " ";
-                    } 
-
-                    break;
-
-                case 'l':
-
-                    for(int x = 1; x < ship_length; x++)
-                        temp->pos[x] = temp->pos[x-1]-1;
-
-                    break;
-
-                case 'u':
-
-                    for(int x = 1; x < ship_length; x++)
-                        temp->pos[x] = temp->pos[x-1]-10; 
-
-                    break;
-
-                case 'd':
-
-                    for(int x = 1; x < ship_length; x++)
-                        temp->pos[x] = temp->pos[x-1]+10; 
-
-                    break;
-            }
-
-            add_master_pos(ship_num);
+            cout << "\n\nEnter starting position(Ex: A1): ";
+            getline(cin, position);
+            bad_ship_placement(position);
         }
 
-        char find_direction(int position, int ship_num)
+        return convert(position);
+    }
+
+    string getplayername()
+    {
+        return player_name;
+    }
+
+    int getnumships()
+    {
+        return num_ship;
+    }
+
+    void setship(int ship_size, string ship_name, battleship *second)
+    {
+        if(ships == NULL)
         {
-            int ship_length = get_ship_info(ship_num)->size;
-            string dir = "";
+            ships = new ship_info;
+            ships -> next = NULL;
+            ships -> pos = new int[ship_size*2];
+            ships -> size = ship_size;
+            ships -> name = ship_name;
+            rear = ships;
+            second -> ships = ships;
+            second -> rear = ships;
+        }
 
-            int *pos = convert(position);
+        else
+        {
+            ship_info *temp = new ship_info;
+            temp -> next = NULL;
+            temp -> pos = new int[ship_size*2];
+            temp -> size = ship_size;
+            temp -> name = ship_name;
+            rear -> next = temp;
+            second -> rear = temp;
+            rear = temp;
+            second -> rear = rear;
+        }
 
-            if(pos[1]+ship_length < 10)
-            {
-                if(master_ship_pos.empty())
-                    dir += "r";
+        num_ship++;
+    }
 
-                else
+    void set_position(int ship_num)
+    {
+        int position = setstartingposition();
+        char dir = find_direction(position, ship_num);
+
+        ship_info *temp = get_ship_info(ship_num);
+        int ship_length = temp->size;
+
+        temp->pos = new int[ship_length];
+
+        temp->pos[0] = position; 
+
+        switch(dir)
+        {
+            case 'r':
+
+                for(int x = 1; x < ship_length; x++)
                 {
-                    int start = convert(pos[0], pos[1]);
-                    int finish = convert(pos[0], pos[1]+ship_length);
+                    temp->pos[x] = temp->pos[x-1]+1;
+                    cout << temp->pos[x] << " ";
+                } 
 
-                    for(int x = 0; x < master_ship_pos.size(); x++)
-                    {
-                        if(master_ship_pos[x] > start && master_ship_pos[x] < finish)
-                            break;
+                break;
 
-                        else if(x == master_ship_pos.size()-1)
-                            dir += "r";
-                    }
+            case 'l':
+
+                for(int x = 1; x < ship_length; x++)
+                    temp->pos[x] = temp->pos[x-1]-1;
+
+                break;
+
+            case 'u':
+
+                for(int x = 1; x < ship_length; x++)
+                    temp->pos[x] = temp->pos[x-1]-10; 
+
+                break;
+
+            case 'd':
+
+                for(int x = 1; x < ship_length; x++)
+                    temp->pos[x] = temp->pos[x-1]+10; 
+
+                break;
+        }
+
+        add_master_pos(ship_num);
+    }
+
+    char find_direction(int position, int ship_num)
+    {
+        int ship_length = get_ship_info(ship_num)->size;
+        string dir = "";
+
+        int *pos = convert(position);
+
+        if(pos[1]+ship_length < 10)
+        {
+            if(master_ship_pos.empty())
+                dir += "r";
+
+            else
+            {
+                int start = convert(pos[0], pos[1]);
+                int finish = convert(pos[0], pos[1]+ship_length);
+
+                for(int x = 0; x < master_ship_pos.size(); x++)
+                {
+                    if(master_ship_pos[x] > start && master_ship_pos[x] < finish)
+                        break;
+
+                    else if(x == master_ship_pos.size()-1)
+                        dir += "r";
                 }
             }
+        }
 
-            if(pos[1]-ship_length >= 0)
+        if(pos[1]-ship_length >= 0)
+        {
+            if(master_ship_pos.empty())
+                dir += "l";
+
+            else
             {
-                if(master_ship_pos.empty())
-                    dir += "l";
+                int start = convert(pos[0], pos[1]);
+                int finish = convert(pos[0], pos[1]-ship_length);
 
-                else
+                for(int x = 0; x < master_ship_pos.size(); x++)
                 {
-                    int start = convert(pos[0], pos[1]);
-                    int finish = convert(pos[0], pos[1]-ship_length);
+                    if(master_ship_pos[x] > start && master_ship_pos[x] < finish)
+                        break;
 
-                    for(int x = 0; x < master_ship_pos.size(); x++)
-                    {
-                        if(master_ship_pos[x] > start && master_ship_pos[x] < finish)
-                            break;
-
-                        else if(x == master_ship_pos.size()-1)
-                            dir += "l";
-                    }
+                    else if(x == master_ship_pos.size()-1)
+                        dir += "l";
                 }
             }
+        }
 
-            if(pos[0]-ship_length >= 0)
-                dir += "u";
+        if(pos[0]-ship_length >= 0)
+            dir += "u";
 
-            if(pos[0]+ship_length < 10)
-                dir += "d";
+        if(pos[0]+ship_length < 10)
+            dir += "d";
 
-            char direction;
+        char direction;
 
+        cout << "Enter Direction (" << dir << "): ";
+        cin >> direction;
+
+        while(dir.empty())
+        {
+            cout << "\nError: Not enough space to place ship at given position";
+            cout << "";
+        }
+
+        while(dir.find(direction) == string::npos)
+        {
+            cout << "\nError: Must enter given direction\n";
             cout << "Enter Direction (" << dir << "): ";
             cin >> direction;
-
-            while(dir.empty())
-            {
-                cout << "\nError: Not enough space to place ship at given position";
-                cout << "";
-            }
-
-            while(dir.find(direction) == string::npos)
-            {
-                cout << "\nError: Must enter given direction\n";
-                cout << "Enter Direction (" << dir << "): ";
-                cin >> direction;
-            }
-
-            return direction;
         }
 
-        bool bad_ship_placement(string position)
+        return direction;
+    }
+
+    bool bad_ship_placement(string position)
+    {
+        if(position.length() < 2 || position.length() > 3)
         {
-            if(position.length() < 2 || position.length() > 3)
+            cout << "Error: Expecting only a letter and number up to 10";
+            return true;
+        }
+
+        char letter = position.at(0);
+
+        if(!isalpha(letter))
+        {
+            cout << "Error: Expected a letter followed by a number";
+            return true;
+        }
+        
+        letter = toupper(letter);
+
+        for(int x = 1; x < position.length(); x++)
+        {
+            if(!isdigit(position.at(x)))
             {
                 cout << "Error: Expecting only a letter and number up to 10";
                 return true;
             }
+        }
 
-            char letter = position.at(0);
+        int number = stoi(position.substr(1));
 
-            if(!isalpha(letter))
-            {
-                cout << "Error: Expected a letter followed by a number";
+        if(letter < 'A' || letter > 'J')
+        {
+            cout << "Error: Letter must be between A and J";
+            return true;
+        }
+
+        if(number < 1 || number > 10)
+        {
+            cout << "Error: Number must be between 1 and 10";
+            return true;
+        }
+
+        int temp = convert(toupper(position.at(0))-65, position.at(1) - 49);
+
+        for(auto &x : master_ship_pos)
+        {
+            if (x == temp)
                 return true;
-            }
-            
-            letter = toupper(letter);
-
-            for(int x = 1; x < position.length(); x++)
-            {
-                if(!isdigit(position.at(x)))
-                {
-                    cout << "Error: Expecting only a letter and number up to 10";
-                    return true;
-                }
-            }
-
-            int number = stoi(position.substr(1));
-
-            if(letter < 'A' || letter > 'J')
-            {
-                cout << "Error: Letter must be between A and J";
-                return true;
-            }
-
-            if(number < 1 || number > 10)
-            {
-                cout << "Error: Number must be between 1 and 10";
-                return true;
-            }
-
-            int temp = convert(toupper(position.at(0))-65, position.at(1) - 49);
-
-            for(auto &x : master_ship_pos)
-            {
-                if (x == temp)
-                    return true;
-            }
-
-            return false;
         }
 
-        ship_info *get_ship_info(int ship_number)
+        return false;
+    }
+
+    ship_info *get_ship_info(int ship_number)
+    {
+        ship_info *temp = ships;
+
+        for(int x = 0; x < ship_number; x++)
         {
-            ship_info *temp = ships;
-
-            for(int x = 0; x < ship_number; x++)
-            {
-                if(temp -> next != NULL)
-                    temp = temp -> next;
-            }
-
-            return temp;
+            if(temp -> next != NULL)
+                temp = temp -> next;
         }
 
-        void add_master_pos(int ship_num)
-        {
-            ship_info *temp = get_ship_info(ship_num);
+        return temp;
+    }
 
-            for(int x = 0; x < temp->size; x++)
-                master_ship_pos.push_back(temp->pos[x]);
-        }
+    void add_master_pos(int ship_num)
+    {
+        ship_info *temp = get_ship_info(ship_num);
 
-        int convert(string position)
-        {
-            return convert(toupper(position.at(0))-65, position.at(1) - 49);
-        }
+        for(int x = 0; x < temp->size; x++)
+            master_ship_pos.push_back(temp->pos[x]);
+    }
 
-        int convert(int row, int col)
-        {
-            if(row == 0)
-                return col;
-            
-            if(col == 0)
-                return row * 10;
+    int convert(string position)
+    {
+        return convert(toupper(position.at(0))-65, position.at(1) - 49);
+    }
 
-            return (row*10) + col;
-        }
+    int convert(int row, int col)
+    {
+        if(row == 0)
+            return col;
+        
+        if(col == 0)
+            return row * 10;
 
-        int *convert(int position)
-        {
-            int *pos = new int[2];
+        return (row*10) + col;
+    }
 
-            pos[1] = (position % 10);
-            pos[0] = (position/10) % 10;
+    int *convert(int position)
+    {
+        int *pos = new int[2];
 
-            return pos;
-        }
+        pos[1] = (position % 10);
+        pos[0] = (position/10) % 10;
+
+        return pos;
+    }
 };
 
 #endif

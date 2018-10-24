@@ -19,8 +19,7 @@ int main(void)
     do{
         playgame(player, player_count);
 
-    }while (play());
-
+    } while (play());
 }
 
 void playgame(battleship *player[], int player_count)
@@ -37,13 +36,10 @@ int play()
 void position_ships(battleship *player[], int player_count)
 {
     string default_ship_names[5] = {"Aircraft Carrier", "Battleship", "Cruiser", "Submarine", "Patrol Boat"};
-    string direction; char dir;
     int default_ship_size[5] = {5, 4, 3, 3, 2};
 
     for(int x = 0; x < 5; x++)
-    {
         player[0]->setship(default_ship_size[x], default_ship_names[x], player[1]);
-    }
 
     for(int x = 0; x < player_count; x++)
     {
@@ -55,13 +51,7 @@ void position_ships(battleship *player[], int player_count)
 
         for(int y = 0; y < player[0]->getnumships(); y++)
         {
-            string position;
-
-            int *pos = new int[2];
-
             player[x]->set_position(y);
-
-            
 
             cin.ignore();
             cout << endl;
