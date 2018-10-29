@@ -52,6 +52,8 @@ void position_ships(battleship *player[], int player_count)
         for(int y = 0; y < player[0]->getnumships(); y++)
         {
             player[x]->set_position(y);
+            
+            player[x]->print_board();
 
             cin.ignore();
             cout << endl;
@@ -125,7 +127,7 @@ void game_config(battleship *player[])
 
     for(int x = 0; x < ship_count; x++)
     {
-        cout << player[1] -> get_ship_info(x)->name << endl;
+        cout << player[1]->get_ship_info(x)->name << endl;
     }
 
     system("pause");

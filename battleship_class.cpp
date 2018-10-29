@@ -5,6 +5,7 @@
 #include <string>
 #include <iomanip>
 #include <vector>
+#include <algorithm>
 using namespace std;
 
 class battleship
@@ -135,10 +136,7 @@ public:
             case 'r':
 
                 for(int x = 1; x < ship_length; x++)
-                {
                     temp->pos[x] = temp->pos[x-1]+1;
-                    cout << temp->pos[x] << " ";
-                } 
 
                 break;
 
@@ -289,7 +287,10 @@ public:
         for(auto &x : master_ship_pos)
         {
             if (x == temp)
+            {
+                cout << "Error: Position collides with another ship: ";
                 return true;
+            }
         }
 
         return false;
@@ -340,6 +341,53 @@ public:
         pos[0] = (position/10) % 10;
 
         return pos;
+    }
+
+    void print_board()
+    {
+
+        vector<int> temp = master_ship_pos;
+        sort(temp.begin(), temp.end());
+        
+		cout << "     1   2   3   4   5   6   7   8   9   0\n";
+
+		for (int x = 0; x < 11; x++)
+		{
+			for (int y = 0; y < 10; y++)
+			{
+				if (y == 0) { cout << "    ---"; }
+				else { cout << " ---"; }
+
+				if (y == 9 && x != 0 && x != 10)
+					cout << "\t|";
+			}
+
+			cout << endl;
+
+			if (x < 10)
+			{
+				cout << ' ' << char(x + 65);
+
+				for (int y = 0; y < 11; y++)
+				{
+					cout << " | ";
+
+					if (y < 10)
+                    {
+                        if(!temp.empty() && convert(x, y) == temp.at(0))
+                        {
+                            cout << "X";
+                            temp.erase(temp.begin());
+                        } 
+                        else
+                            cout << " ";                        
+                    }
+
+					else { cout << "\t|"; }
+				}
+			}
+            cout << endl;
+		}
     }
 };
 
