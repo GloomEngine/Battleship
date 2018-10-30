@@ -123,6 +123,13 @@ public:
     {
         int position = setstartingposition();
         char dir = find_direction(position, ship_num);
+        
+        while(dir == '\0')
+        {
+            cout << "\nError: Not enough space for ship\n\n";
+            position = setstartingposition();
+            dir = find_direction(position, ship_num);
+        }
 
         ship_info *temp = get_ship_info(ship_num);
         int ship_length = temp->size;
@@ -168,68 +175,104 @@ public:
     char find_direction(int position, int ship_num)
     {
         int ship_length = get_ship_info(ship_num)->size;
-        string dir = "";
+        string dir;
 
         int *pos = convert(position);
 
-        if(pos[1]+ship_length < 10)
+        while(dir.empty())
         {
-            if(master_ship_pos.empty())
-                dir += "r";
-
-            else
+            if(pos[1]+ship_length < 10)
             {
-                int start = convert(pos[0], pos[1]);
-                int finish = convert(pos[0], pos[1]+ship_length);
+                if(master_ship_pos.empty())
+                    dir += "r";
 
-                for(int x = 0; x < master_ship_pos.size(); x++)
+                else
                 {
-                    if(master_ship_pos[x] > start && master_ship_pos[x] < finish)
-                        break;
+                    int start = convert(pos[0], pos[1]);
+                    int finish = convert(pos[0], pos[1]+ship_length);
 
-                    else if(x == master_ship_pos.size()-1)
-                        dir += "r";
+                    for(int x = 0; x < master_ship_pos.size(); x++)
+                    {
+                        if(master_ship_pos[x] > start && master_ship_pos[x] < finish)
+                            break;
+
+                        else if(x == master_ship_pos.size()-1)
+                            dir += "r";
+                    }
                 }
             }
-        }
 
-        if(pos[1]-ship_length >= 0)
-        {
-            if(master_ship_pos.empty())
-                dir += "l";
-
-            else
+            if(pos[1]-ship_length >= 0)
             {
-                int start = convert(pos[0], pos[1]);
-                int finish = convert(pos[0], pos[1]-ship_length);
+                if(master_ship_pos.empty())
+                    dir += "l";
 
-                for(int x = 0; x < master_ship_pos.size(); x++)
+                else
                 {
-                    if(master_ship_pos[x] > start && master_ship_pos[x] < finish)
-                        break;
+                    int start = convert(pos[0], pos[1]);
+                    int finish = convert(pos[0], pos[1]-ship_length);
 
-                    else if(x == master_ship_pos.size()-1)
-                        dir += "l";
+                    for(int x = 0; x < master_ship_pos.size(); x++)
+                    {
+                        if(master_ship_pos[x] > finish && master_ship_pos[x] < start)
+                            break;
+
+                        else if(x == master_ship_pos.size()-1)
+                            dir += "l";
+                    }
                 }
             }
+
+            if(pos[0]-ship_length >= 0)
+            {
+                if(master_ship_pos.empty())
+                    dir += "u";
+
+                else
+                {
+                    int start = convert(pos[0], pos[1]);
+                    int finish = convert(pos[0]-ship_length, pos[1]);
+
+                    for(int x = 0; x < master_ship_pos.size(); x++)
+                    {
+                        if(master_ship_pos[x] > finish && master_ship_pos[x] < start)
+                            break;
+
+                        else if(x == master_ship_pos.size()-1)
+                            dir += "u";
+                    }
+                }
+            }
+
+            if(pos[0]+ship_length < 10)
+            {
+                if(master_ship_pos.empty())
+                    dir += "d";
+
+                else
+                {
+                    int start = convert(pos[0], pos[1]);
+                    int finish = convert(pos[0]+ship_length, pos[1]);
+
+                    for(int x = 0; x < master_ship_pos.size(); x++)
+                    {
+                        if(master_ship_pos[x] > (start+(x*10)) && master_ship_pos[x] < (finish+(x*10)))
+                            break;
+
+                        else if(x == master_ship_pos.size()-1)
+                            dir += "d";
+                    }
+                }
+            }
+
+            if(dir.empty())
+                return '\0';
         }
-
-        if(pos[0]-ship_length >= 0)
-            dir += "u";
-
-        if(pos[0]+ship_length < 10)
-            dir += "d";
 
         char direction;
 
         cout << "Enter Direction (" << dir << "): ";
         cin >> direction;
-
-        while(dir.empty())
-        {
-            cout << "\nError: Not enough space to place ship at given position";
-            cout << "";
-        }
 
         while(dir.find(direction) == string::npos)
         {
