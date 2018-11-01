@@ -25,7 +25,7 @@ private:
 
     ship_info *ships = NULL, *rear = NULL;
     int num_ship = 0;
-    vector <int> master_ship_pos;
+    vector <pair<int, int>> master_ship_pos;
     vector <int> miss_list;
 
 public:
@@ -196,7 +196,7 @@ public:
 
                     for(int x = 0; x < master_ship_pos.size(); x++)
                     {
-                        if(master_ship_pos[x] > start && master_ship_pos[x] < finish)
+                        if(master_ship_pos[x].first > start && master_ship_pos[x].first < finish)
                             break;
 
                         else if(x == master_ship_pos.size()-1)
@@ -217,7 +217,7 @@ public:
 
                     for(int x = 0; x < master_ship_pos.size(); x++)
                     {
-                        if(master_ship_pos[x] > finish && master_ship_pos[x] < start)
+                        if(master_ship_pos[x].first > finish && master_ship_pos[x].first < start)
                             break;
 
                         else if(x == master_ship_pos.size()-1)
@@ -239,7 +239,7 @@ public:
                     {
                         for(int x = 0; x < master_ship_pos.size(); x++)
                         {
-                            if(master_ship_pos[x] == convert((pos[0]-y), pos[1]))
+                            if(master_ship_pos[x].first == convert((pos[0]-y), pos[1]))
                             {
                                 bad = true;
                                 break;
@@ -268,7 +268,7 @@ public:
                     {
                         for(int x = 0; x < master_ship_pos.size(); x++)
                         {
-                            if(master_ship_pos[x] == convert((pos[0]+y), pos[1]))
+                            if(master_ship_pos[x].first == convert((pos[0]+y), pos[1]))
                             {
                                 bad = true;
                                 break;
@@ -364,7 +364,7 @@ public:
 
         for(auto &x : master_ship_pos)
         {
-            if (x == temp)
+            if (x.first == temp)
             {
                 system("cls");
                 print_board(ship_num);
@@ -394,7 +394,7 @@ public:
         ship_info *temp = get_ship_info(ship_num);
 
         for(int x = 0; x < temp->size; x++)
-            master_ship_pos.push_back(temp->pos[x]);
+            master_ship_pos.push_back(make_pair(temp->pos[x], ship_num));
     }
 
     int convert(string position)
@@ -430,7 +430,7 @@ public:
 
     void print_board(int modifier)
     {
-        vector<int> temp = master_ship_pos;
+        vector<pair<int, int>> temp = master_ship_pos;
         sort(temp.begin(), temp.end());
         string message = get_ship_info(modifier)->name+" ("+to_string(get_ship_info(modifier)->size);
         message += " spaces)";
@@ -465,7 +465,7 @@ public:
 
 					if (y < 10)
                     {
-                        if(!temp.empty() && convert(x, y) == temp.at(0))
+                        if(!temp.empty() && convert(x, y) == temp[0].first)
                         {
                             cout << "X";
                             temp.erase(temp.begin());
@@ -482,6 +482,110 @@ public:
                 cout << '\t' << message;
             cout << endl;
 		}
+    }
+
+    void print_board()
+    {
+        vector<pair<int, int>> temp;
+
+        int master_size = 0;
+
+        for(int x = 0; x < num_ship; x++)
+        {
+            int size = get_ship_info(x)->size;
+            int *pos = get_ship_info(x)->pos;
+
+            for(int y = 0; y < size; y++)
+                temp.push_back(make_pair(pos[y], x+1));
+        }
+        
+        sort(temp.begin(), temp.end());
+
+        cout << "\n\n     1   2   3   4   5   6   7   8   9   0\n";
+
+		for (int x = 0; x < 11; x++)
+		{
+			for (int y = 0; y < 10; y++)
+			{
+				if (y == 0) { cout << "    ---"; }
+				else { cout << " ---"; }
+
+				if (y == 9 && x != 0 && x != 10)
+					cout << "\t|";
+			}
+
+			cout << endl;
+
+			if (x < 10)
+			{
+				cout << ' ' << char(x + 65);
+
+				for (int y = 0; y < 11; y++)
+				{
+					cout << " | ";
+
+					if (y < 10)
+                    {
+                        if(!temp.empty() && convert(x, y) == temp[0].first)
+                        {
+                            cout << temp[0].second;
+                            temp.erase(temp.begin());
+                        } 
+                        else
+                            cout << " ";                        
+                    }
+					else { cout << "\t|"; }
+				}
+			}
+            cout << endl;
+		}
+    }
+
+    void reposition()
+    {
+        string input;
+
+        print_board(-1);
+
+        cout << "\nWould you like to reposition any ships (y/n): ";
+        cin >> input;
+
+        while(input.size() != 1 || (input != "y" && input != "n"))
+        {
+            system("cls");
+            print_board(-1);
+            cin.ignore();
+
+            cout << "Error: Must enter either a 'y' or 'n'";
+            cout << "\nWould you like to reposition any ships (y/n): ";
+            cin >> input;
+        }
+
+        if(input == "n")
+            return;
+
+        int number;
+
+        system("cls");
+
+        print_board();
+        cout << "Which ship do you want to reposition?";
+        cout << "\nEnter number: ";
+        cin >> number;
+
+        for(int x = 0; x < master_ship_pos.size();)
+        {
+            if(master_ship_pos[x].second == number-1)
+                master_ship_pos.erase(master_ship_pos.begin()+x);
+            else
+                x++;
+        }
+
+        set_position(number-1);
+
+        print_board(number-1);
+
+        system("pause");
     }
 };
 

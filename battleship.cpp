@@ -16,10 +16,7 @@ int main(void)
     player[0] = new battleship;
     player[1] = new battleship;
 
-    do{
-        playgame(player, player_count);
-
-    } while (play());
+    playgame(player, player_count);
 }
 
 void playgame(battleship *player[], int player_count)
@@ -27,12 +24,15 @@ void playgame(battleship *player[], int player_count)
     //game_config(player);
     position_ships(player, player_count);
 
-    
+    while(play())
+    {
+
+    }
 }
 
 int play()
 {
-    return 0;
+    return 1;
 }
 
 void position_ships(battleship *player[], int player_count)
@@ -59,6 +59,7 @@ void position_ships(battleship *player[], int player_count)
             cout << endl;
             system("cls");
         }
+        player[x]->reposition();
     }
 }
 
