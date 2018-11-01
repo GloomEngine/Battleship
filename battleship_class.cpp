@@ -26,6 +26,7 @@ private:
     ship_info *ships = NULL, *rear = NULL;
     int num_ship = 0;
     vector <int> master_ship_pos;
+    vector <int> miss_list;
 
 public:
 
@@ -62,18 +63,17 @@ public:
         cout << endl;
     }
 
-    int setstartingposition()
+    int setstartingposition(int ship_num)
     {
         string position;
 
-        cout << "Enter starting position(Ex: A1): ";
+        cout << " Enter starting position(Ex: A1): ";
         getline(cin, position);
 
-        while(bad_ship_placement(position))
+        while(bad_ship_placement(position, ship_num))
         {
-            cout << "\n\nEnter starting position(Ex: A1): ";
+            cout << "\n\n Enter starting position(Ex: A1): ";
             getline(cin, position);
-            bad_ship_placement(position);
         }
 
         return convert(position);
@@ -115,19 +115,22 @@ public:
             rear = temp;
             second -> rear = rear;
         }
-
+        
         num_ship++;
+        second->num_ship = num_ship;
     }
 
     void set_position(int ship_num)
     {
-        int position = setstartingposition();
+        int position = setstartingposition(ship_num);
         char dir = find_direction(position, ship_num);
         
         while(dir == '\0')
         {
-            cout << "\nError: Not enough space for ship\n\n";
-            position = setstartingposition();
+            system("cls");
+            print_board(ship_num);
+            cout << "\n Error: Not enough space for ship\n\n";
+            position = setstartingposition(ship_num);
             dir = find_direction(position, ship_num);
         }
 
@@ -230,17 +233,25 @@ public:
 
                 else
                 {
-                    int start = convert(pos[0], pos[1]);
-                    int finish = convert(pos[0]-ship_length, pos[1]);
+                    bool bad = false;
 
-                    for(int x = 0; x < master_ship_pos.size(); x++)
+                    for(int y = 0; y < ship_length; y++)
                     {
-                        if(master_ship_pos[x] > finish && master_ship_pos[x] < start)
-                            break;
+                        for(int x = 0; x < master_ship_pos.size(); x++)
+                        {
+                            if(master_ship_pos[x] == convert((pos[0]-y), pos[1]))
+                            {
+                                bad = true;
+                                break;
+                            }
+                        }
 
-                        else if(x == master_ship_pos.size()-1)
-                            dir += "u";
+                        if(bad)
+                            break;
                     }
+
+                    if(!bad)
+                        dir += 'u';
                 }
             }
 
@@ -251,17 +262,25 @@ public:
 
                 else
                 {
-                    int start = convert(pos[0], pos[1]);
-                    int finish = convert(pos[0]+ship_length, pos[1]);
+                    bool bad = false;
 
-                    for(int x = 0; x < master_ship_pos.size(); x++)
+                    for(int y = 0; y < ship_length; y++)
                     {
-                        if(master_ship_pos[x] > (start+(x*10)) && master_ship_pos[x] < (finish+(x*10)))
-                            break;
+                        for(int x = 0; x < master_ship_pos.size(); x++)
+                        {
+                            if(master_ship_pos[x] == convert((pos[0]+y), pos[1]))
+                            {
+                                bad = true;
+                                break;
+                            }
+                        }
 
-                        else if(x == master_ship_pos.size()-1)
-                            dir += "d";
+                        if(bad)
+                            break;
                     }
+
+                    if(!bad)
+                        dir += 'd';
                 }
             }
 
@@ -269,26 +288,31 @@ public:
                 return '\0';
         }
 
-        char direction;
+        string direction;
 
-        cout << "Enter Direction (" << dir << "): ";
+        cout << " Enter Direction (" << dir << "): ";
         cin >> direction;
 
-        while(dir.find(direction) == string::npos)
+        while(dir.find(direction) == string::npos || direction.size() > 2)
         {
-            cout << "\nError: Must enter given direction\n";
-            cout << "Enter Direction (" << dir << "): ";
+            system("cls");
+            print_board(ship_num);
+            cout << "\n Error: Must enter given direction\n";
+            cout << " Enter Direction (" << dir << "): ";
+            cin.ignore();
             cin >> direction;
         }
 
-        return direction;
+        return direction.at(0);
     }
 
-    bool bad_ship_placement(string position)
+    bool bad_ship_placement(string position, int ship_num)
     {
         if(position.length() < 2 || position.length() > 3)
         {
-            cout << "Error: Expecting only a letter and number up to 10";
+            system("cls");
+            print_board(ship_num);
+            cout << " Error: Expecting only a letter and number up to 10";
             return true;
         }
 
@@ -296,7 +320,9 @@ public:
 
         if(!isalpha(letter))
         {
-            cout << "Error: Expected a letter followed by a number";
+            system("cls");
+            print_board(ship_num);
+            cout << " Error: Expected a letter followed by a number";
             return true;
         }
         
@@ -306,6 +332,8 @@ public:
         {
             if(!isdigit(position.at(x)))
             {
+                system("cls");
+                print_board(ship_num);
                 cout << "Error: Expecting only a letter and number up to 10";
                 return true;
             }
@@ -315,23 +343,32 @@ public:
 
         if(letter < 'A' || letter > 'J')
         {
-            cout << "Error: Letter must be between A and J";
+            system("cls");
+            print_board(ship_num);
+            cout << " Error: Letter must be between A and J";
             return true;
         }
 
-        if(number < 1 || number > 10)
+        if(number < 0 || number > 10)
         {
-            cout << "Error: Number must be between 1 and 10";
+            system("cls");
+            print_board(ship_num);
+            cout << " Error: Number must be between 1 and 10";
             return true;
         }
 
-        int temp = convert(toupper(position.at(0))-65, position.at(1) - 49);
+        if(number == 0)
+            number = 10;
+
+        int temp = convert(toupper(letter)-65, number-1);
 
         for(auto &x : master_ship_pos)
         {
             if (x == temp)
             {
-                cout << "Error: Position collides with another ship: ";
+                system("cls");
+                print_board(ship_num);
+                cout << " Error: Position collides with another ship: ";
                 return true;
             }
         }
@@ -362,7 +399,12 @@ public:
 
     int convert(string position)
     {
-        return convert(toupper(position.at(0))-65, position.at(1) - 49);
+        int number = stoi(position.substr(1));
+
+        if(number == 0)
+            number = 10;
+
+        return convert(toupper(position.at(0))-65, number-1);
     }
 
     int convert(int row, int col)
@@ -386,13 +428,14 @@ public:
         return pos;
     }
 
-    void print_board()
+    void print_board(int modifier)
     {
-
         vector<int> temp = master_ship_pos;
         sort(temp.begin(), temp.end());
+        string message = get_ship_info(modifier)->name+" ("+to_string(get_ship_info(modifier)->size);
+        message += " spaces)";
         
-		cout << "     1   2   3   4   5   6   7   8   9   0\n";
+		cout << "\n\n     1   2   3   4   5   6   7   8   9   0\n";
 
 		for (int x = 0; x < 11; x++)
 		{
@@ -402,7 +445,12 @@ public:
 				else { cout << " ---"; }
 
 				if (y == 9 && x != 0 && x != 10)
+                {
 					cout << "\t|";
+
+                    if(x == 1 && modifier >= 0 && modifier < num_ship)
+                        cout << '\t' << string(message.size(), '-');
+                }
 			}
 
 			cout << endl;
@@ -429,6 +477,9 @@ public:
 					else { cout << "\t|"; }
 				}
 			}
+
+            if(x == 0 && modifier >= 0 && modifier < num_ship)
+                cout << '\t' << message;
             cout << endl;
 		}
     }

@@ -26,6 +26,8 @@ void playgame(battleship *player[], int player_count)
 {
     //game_config(player);
     position_ships(player, player_count);
+
+    
 }
 
 int play()
@@ -35,7 +37,7 @@ int play()
 
 void position_ships(battleship *player[], int player_count)
 {
-    string default_ship_names[5] = {"Aircraft Carrier", "Battleship", "Cruiser", "Submarine", "Patrol Boat"};
+    string default_ship_names[5] = {"Carrier", "Battleship", "Cruiser", "Submarine", "Patrol Boat"};
     int default_ship_size[5] = {5, 4, 3, 3, 2};
 
     for(int x = 0; x < 5; x++)
@@ -43,20 +45,19 @@ void position_ships(battleship *player[], int player_count)
 
     for(int x = 0; x < player_count; x++)
     {
-        cout << player[!x]->getplayername() << " look away while ";
-        cout << player[x]->getplayername() << " positions their ships";
+        cout << "Look away while "<< player[x]->getplayername() << " positions their ships";
 
         getchar();
         system("cls");
 
-        for(int y = 0; y < player[0]->getnumships(); y++)
+        for(int y = 0; y < player[x]->getnumships(); y++)
         {
+            player[x]->print_board(y);
             player[x]->set_position(y);
-            
-            player[x]->print_board();
 
             cin.ignore();
             cout << endl;
+            system("cls");
         }
     }
 }
