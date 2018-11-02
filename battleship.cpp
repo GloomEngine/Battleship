@@ -4,7 +4,7 @@
 using namespace std;
 
 void playgame(battleship *[], int);
-int play();
+bool game_over(battleship *[], int);
 void position_ships(battleship *[], int);
 void game_config(battleship *[]);
 
@@ -24,15 +24,27 @@ void playgame(battleship *player[], int player_count)
     //game_config(player);
     position_ships(player, player_count);
 
-    while(play())
+    while(!game_over(player, player_count))
     {
+        for(int x = 0; x < player_count; x++)
+        {
+            int z = 0;
+            for(int y = x+1; z < player_count; y++)
+            {
+                if(y == player_count-1)
+                    y = 0;
 
+                cout << " " << player[x]->getplayername() << " it's time to sink some ships!";
+                player[x]->print_board(player[y]);
+                z++;
+            }
+        }
     }
 }
 
-int play()
+bool game_over(battleship *player[], int player_count)
 {
-    return 1;
+    return player[0]->get_game_state(player, player_count);
 }
 
 void position_ships(battleship *player[], int player_count)
@@ -52,6 +64,7 @@ void position_ships(battleship *player[], int player_count)
 
         for(int y = 0; y < player[x]->getnumships(); y++)
         {
+            cout << " " << player[x]->getplayername() << " enter your ships";
             player[x]->print_board(y);
             player[x]->set_position(y);
 

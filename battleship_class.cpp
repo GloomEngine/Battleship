@@ -67,12 +67,12 @@ public:
     {
         string position;
 
-        cout << " Enter starting position(Ex: A1): ";
+        cout << " Enter starting position (Ex: A1): ";
         getline(cin, position);
 
         while(bad_ship_placement(position, ship_num))
         {
-            cout << "\n\n Enter starting position(Ex: A1): ";
+            cout << "\n\n Enter starting position (Ex: A1): ";
             getline(cin, position);
         }
 
@@ -541,6 +541,11 @@ public:
 		}
     }
 
+    void print_board(battleship *player)
+    {
+        
+    }
+
     void reposition()
     {
         string input;
@@ -561,31 +566,62 @@ public:
             cin >> input;
         }
 
-        if(input == "n")
-            return;
-
-        int number;
-
-        system("cls");
-
-        print_board();
-        cout << "Which ship do you want to reposition?";
-        cout << "\nEnter number: ";
-        cin >> number;
-
-        for(int x = 0; x < master_ship_pos.size();)
+        while(input == "y")
         {
-            if(master_ship_pos[x].second == number-1)
-                master_ship_pos.erase(master_ship_pos.begin()+x);
-            else
-                x++;
+            int number;
+
+            system("cls");
+
+            print_board();
+            cout << "Which ship do you want to reposition?";
+            cout << "\nEnter number: ";
+            cin >> number;
+
+            for(int x = 0; x < master_ship_pos.size();)
+            {
+                if(master_ship_pos[x].second == number-1)
+                    master_ship_pos.erase(master_ship_pos.begin()+x);
+                else
+                    x++;
+            }
+
+            set_position(number-1);
+
+            system("cls");
+
+            print_board(number-1);
+
+            cout << "Would you like to reposition another ship (y/n): ";
+            cin >> input;
+
+            while(input.size() != 1 || (input != "y" && input != "n"))
+            {
+                system("cls");
+                print_board(-1);
+                cin.ignore();
+
+                cout << "Error: Must enter either a 'y' or 'n'";
+                cout << "\nWould you like to reposition another ship (y/n): ";
+                cin >> input;
+            }
+        }
+    }
+
+    bool get_game_state(battleship *player[], int player_count)
+    {
+        if(player_count == 1)
+            return true;
+
+        for(int x = 0; x < player_count; x++)
+        {
+            if(player[x]->ships == NULL)
+                player_count--;
+
+            if(player_count == 1)
+                return true;
         }
 
-        set_position(number-1);
-
-        print_board(number-1);
-
-        system("pause");
+        return false;
     }
 };
 
