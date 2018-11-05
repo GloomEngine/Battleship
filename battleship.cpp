@@ -29,13 +29,16 @@ void playgame(battleship *player[], int player_count)
         for(int x = 0; x < player_count; x++)
         {
             int z = 0;
-            for(int y = x+1; z < player_count; y++)
+            for(int y = x+1; z < player_count-1; y++)
             {
-                if(y == player_count-1)
+                if(y == player_count)
                     y = 0;
+
+                system("cls");
 
                 cout << " " << player[x]->getplayername() << " it's time to sink some ships!";
                 player[x]->print_board(player[y]);
+                player[x]->attack(player[y]);
                 z++;
             }
         }
@@ -52,7 +55,7 @@ void position_ships(battleship *player[], int player_count)
     string default_ship_names[5] = {"Carrier", "Battleship", "Cruiser", "Submarine", "Patrol Boat"};
     int default_ship_size[5] = {5, 4, 3, 3, 2};
 
-    for(int x = 0; x < 5; x++)
+    for(int x = 0; x < 1; x++)
         player[0]->setship(default_ship_size[x], default_ship_names[x], player[1]);
 
     for(int x = 0; x < player_count; x++)
