@@ -26,7 +26,8 @@ private:
     ship_info *ships = NULL, *rear = NULL;
     int num_ship = 0;
     vector <pair<int, int>> master_ship_pos;
-    vector <int> miss_list;
+    vector <pair<int, int>> miss_list;
+    vector <pair<int, int>> hit_list;
 
 public:
 
@@ -70,9 +71,13 @@ public:
         cout << " Enter starting position (Ex: A1): ";
         getline(cin, position);
 
-        while(bad_ship_placement(position, ship_num))
+        while(bad_ship_placement(position))
         {
-            cout << "\n\n Enter starting position (Ex: A1): ";
+            system("cls");
+            cout << player_name << " enter your ships\n";
+            print_board(ship_num);
+            error_codes(bad_ship_placement(position));
+            cout << "\n Enter starting position (Ex: A1): ";
             getline(cin, position);
         }
 
@@ -306,56 +311,31 @@ public:
         return direction.at(0);
     }
 
-    bool bad_ship_placement(string position, int ship_num)
+    int bad_ship_placement(string position)
     {
         if(position.length() < 2 || position.length() > 3)
-        {
-            system("cls");
-            print_board(ship_num);
-            cout << " Error: Expecting only a letter and number up to 10";
-            return true;
-        }
+            return 1;
 
         char letter = position.at(0);
 
         if(!isalpha(letter))
-        {
-            system("cls");
-            print_board(ship_num);
-            cout << " Error: Expected a letter followed by a number";
-            return true;
-        }
+            return 2;
         
         letter = toupper(letter);
 
         for(int x = 1; x < position.length(); x++)
         {
             if(!isdigit(position.at(x)))
-            {
-                system("cls");
-                print_board(ship_num);
-                cout << "Error: Expecting only a letter and number up to 10";
-                return true;
-            }
+                return 3;
         }
 
         int number = stoi(position.substr(1));
 
         if(letter < 'A' || letter > 'J')
-        {
-            system("cls");
-            print_board(ship_num);
-            cout << " Error: Letter must be between A and J";
-            return true;
-        }
+            return 4;
 
         if(number < 0 || number > 10)
-        {
-            system("cls");
-            print_board(ship_num);
-            cout << " Error: Number must be between 1 and 10";
-            return true;
-        }
+            return 5;
 
         if(number == 0)
             number = 10;
@@ -365,15 +345,9 @@ public:
         for(auto &x : master_ship_pos)
         {
             if (x.first == temp)
-            {
-                system("cls");
-                print_board(ship_num);
-                cout << " Error: Position collides with another ship: ";
-                return true;
-            }
+                return 6;
         }
-
-        return false;
+        return 0;
     }
 
     ship_info *get_ship_info(int ship_number)
@@ -543,7 +517,9 @@ public:
 
     void print_board(battleship *player)
     {
-        vector <int> temp = miss_list;
+        vector <pair<int, int>> temp = miss_list;
+        vector <pair<int, int>> temp2 = hit_list;
+
         
         sort(temp.begin(), temp.end());
 
@@ -582,10 +558,15 @@ public:
 
 					if (y < 10)
                     {
-                        if(!temp.empty() && convert(x, y) == temp[0])
+                        if(!temp.empty() && convert(x, y) == temp[0].first)
                         {
                             cout << 'O';
                             temp.erase(temp.begin());
+                        }
+                        else if(!temp.empty() && convert(x, y) == temp2[0].first)
+                        {
+                            cout << 'X';
+                            temp2.erase(temp2.begin());
                         } 
                         else
                             cout << " ";                        
@@ -627,6 +608,18 @@ public:
             cout << " Which ship do you want to reposition?";
             cout << "\n Enter number: ";
             cin >> number;
+
+            while(!cin.good() || number < 1 || number > num_ship)
+            {
+                cin.clear();
+                cin.ignore();
+                system("cls");
+                print_board();
+
+                cout << " Error: Must enter number between 1 and " << num_ship;
+                cout << "\n Enter number: ";
+                cin >> number;
+            }
 
             for(int x = 0; x < master_ship_pos.size();)
             {
@@ -675,12 +668,64 @@ public:
         return false;
     }
 
-    void attack(battleship *player)
+    void attack(battleship *player, int player_identifier)
     {
         string position;
 
         cout << " Enter Position: ";
         cin >> position;
+
+        /*while(bad_ship_placement(position))
+        {
+            system("cls");
+            cout << " " << getplayername() << " it's time to sink some ships!";
+            print_board(player);
+            error_codes(bad_ship_placement(position));
+            cout << " Enter Position: ";
+            cin >> position;
+        }*/
+
+        for(auto &x : player->master_ship_pos)
+        {
+            if(convert(position) == x.first)
+            {
+                system("cls");
+                hit_list.push_back(make_pair(convert(position), player_identifier));
+                print_board(player);
+                cout << " You have hit a ship!";
+                break;
+            }
+        }
+
+        system("pause");
+    }
+
+    void error_codes(int error)
+    {
+        switch (error)
+        {
+            case 1:
+                cout << " Error: Expecting only a letter and number up to 10";
+                break;
+            case 2:
+                cout << " Error: Expected a letter followed by a number";
+                break;
+            case 3:
+                cout << "Error: Number Must be between 0 and 10";
+                break;
+            case 4:
+                cout << " Error: Letter must be between A and J";
+                break;
+            case 5:
+                cout << " Error: Number must be between 1 and 10";
+                break;
+            case 6:
+                cout << " Error: Position collides with another ship: ";
+                break;
+            default:
+                return;                
+        }
+        return;
     }
 };
 

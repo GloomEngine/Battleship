@@ -38,7 +38,7 @@ void playgame(battleship *player[], int player_count)
 
                 cout << " " << player[x]->getplayername() << " it's time to sink some ships!";
                 player[x]->print_board(player[y]);
-                player[x]->attack(player[y]);
+                player[x]->attack(player[y], y);
                 z++;
             }
         }
