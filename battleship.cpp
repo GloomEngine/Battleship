@@ -7,16 +7,22 @@ void playgame(battleship *[], int);
 bool game_over(battleship *[], int);
 void position_ships(battleship *[], int);
 void game_config(battleship *[]);
+bool play_again();
 
 int main(void)
 {
     int player_count = 2;
     battleship *player[2];
+    bool play = true;
 
     player[0] = new battleship;
     player[1] = new battleship;
 
-    playgame(player, player_count);
+    do
+    {
+        playgame(player, player_count);
+        play = play_again();
+    } while(play);
 }
 
 void playgame(battleship *player[], int player_count)
@@ -37,8 +43,12 @@ void playgame(battleship *player[], int player_count)
                 system("cls");
 
                 cout << " " << player[x]->getplayername() << " it's time to sink some ships!";
-                player[x]->print_board(player[y]);
+                player[x]->print_board(y, player[y]);
                 player[x]->attack(player[y], y);
+
+                if(game_over(player, player_count))
+                    return;
+
                 z++;
             }
         }
@@ -55,7 +65,7 @@ void position_ships(battleship *player[], int player_count)
     string default_ship_names[5] = {"Carrier", "Battleship", "Cruiser", "Submarine", "Patrol Boat"};
     int default_ship_size[5] = {5, 4, 3, 3, 2};
 
-    for(int x = 0; x < 1; x++)
+    for(int x = 4; x == 4; x++)
         player[0]->setship(default_ship_size[x], default_ship_names[x], player[1]);
 
     for(int x = 0; x < player_count; x++)
@@ -149,4 +159,9 @@ void game_config(battleship *player[])
     }
 
     system("pause");
+}
+
+bool play_again()
+{
+
 }

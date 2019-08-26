@@ -26,8 +26,7 @@ private:
     ship_info *ships = NULL, *rear = NULL;
     int num_ship = 0;
     vector <pair<int, int>> master_ship_pos;
-    vector <pair<int, int>> miss_list;
-    vector <pair<int, int>> hit_list;
+    vector <pair<int, int>> guess_list;
 
 public:
 
@@ -56,10 +55,8 @@ public:
                 cout << "\nError: Name must start with a letter\n";
                 cout << "Enter Player name: ";
             }
-
             getline(cin, name);
         }
-
         player_name = name;
         cout << endl;
     }
@@ -80,7 +77,6 @@ public:
             cout << "\n Enter starting position (Ex: A1): ";
             getline(cin, position);
         }
-
         return convert(position);
     }
 
@@ -107,7 +103,6 @@ public:
             second -> ships = ships;
             second -> rear = ships;
         }
-
         else
         {
             ship_info *temp = new ship_info;
@@ -120,7 +115,6 @@ public:
             rear = temp;
             second -> rear = rear;
         }
-        
         num_ship++;
         second->num_ship = num_ship;
     }
@@ -138,7 +132,6 @@ public:
             position = setstartingposition(ship_num);
             dir = find_direction(position, ship_num);
         }
-
         ship_info *temp = get_ship_info(ship_num);
         int ship_length = temp->size;
 
@@ -176,7 +169,6 @@ public:
 
                 break;
         }
-
         add_master_pos(ship_num);
     }
 
@@ -250,11 +242,9 @@ public:
                                 break;
                             }
                         }
-
                         if(bad)
                             break;
                     }
-
                     if(!bad)
                         dir += 'u';
                 }
@@ -279,11 +269,9 @@ public:
                                 break;
                             }
                         }
-
                         if(bad)
                             break;
                     }
-
                     if(!bad)
                         dir += 'd';
                 }
@@ -447,13 +435,13 @@ public:
                         else
                             cout << " ";                        
                     }
-
 					else { cout << "\t|"; }
 				}
 			}
 
             if(x == 0 && modifier >= 0 && modifier < num_ship)
                 cout << '\t' << message;
+
             cout << endl;
 		}
     }
@@ -515,12 +503,10 @@ public:
 		}
     }
 
-    void print_board(battleship *player)
+    void print_board(int player_identifier, battleship *player)
     {
-        vector <pair<int, int>> temp = miss_list;
-        vector <pair<int, int>> temp2 = hit_list;
 
-        
+        vector <pair<int, int>> temp = player->guess_list;  
         sort(temp.begin(), temp.end());
 
         cout << "\n\n     1   2   3   4   5   6   7   8   9   0\n";
@@ -541,7 +527,7 @@ public:
                     if(x == 1)
                         cout << "\tShips Remaining";
 
-                    if(x > 1 && x < master_size+2)
+                    if(x > 1 && x < master_size+2 && player->ships != NULL)
                         cout << "\t| " << player->get_ship_info(x-2)->name;
                 }
 			}
@@ -560,14 +546,13 @@ public:
                     {
                         if(!temp.empty() && convert(x, y) == temp[0].first)
                         {
-                            cout << 'O';
+                            if(temp[0].second == 0)
+                                cout << 'O';
+                            else
+                                cout << 'X';
+
                             temp.erase(temp.begin());
                         }
-                        else if(!temp.empty() && convert(x, y) == temp2[0].first)
-                        {
-                            cout << 'X';
-                            temp2.erase(temp2.begin());
-                        } 
                         else
                             cout << " ";                        
                     }
@@ -620,7 +605,6 @@ public:
                 cout << "\n Enter number: ";
                 cin >> number;
             }
-
             for(int x = 0; x < master_ship_pos.size();)
             {
                 if(master_ship_pos[x].second == number-1)
@@ -628,7 +612,6 @@ public:
                 else
                     x++;
             }
-
             set_position(number-1);
 
             system("cls");
@@ -664,7 +647,6 @@ public:
             if(player_count == 1)
                 return true;
         }
-
         return false;
     }
 
@@ -681,22 +663,38 @@ public:
             cout << " " << getplayername() << " it's time to sink some ships!";
             print_board(player);
             error_codes(bad_ship_placement(position));
-            cout << " Enter Position: ";
+            cout << "\n Enter Position: ";
             cin >> position;
         }*/
 
-        for(auto &x : player->master_ship_pos)
+        for(int x = 0; x < player->master_ship_pos.size(); x++)
         {
-            if(convert(position) == x.first)
+            if(convert(position) == player->master_ship_pos[x].first)
             {
                 system("cls");
-                hit_list.push_back(make_pair(convert(position), player_identifier));
-                print_board(player);
-                cout << " You have hit a ship!";
+                player->guess_list.push_back(make_pair(convert(position), 1));
+                int ship = sunk(player, x);
+                if(ship)
+                {
+                    cout << " You have sunk " << player->getplayername() <<"'s " << player->get_ship_info(ship-1)->name;
+                    player->remove_ship(ship-1);
+                    if(player->ships == NULL)
+                        return;
+                }
+                else
+                    cout << " You have hit a ship!\n\n";
+                print_board(player_identifier, player);
                 break;
             }
+            else if (x == player->master_ship_pos.size()-1)
+            {
+                system("cls");
+                player->guess_list.push_back(make_pair(convert(position), 0));
+                print_board(player_identifier, player);
+                cout << " You have hit open water!\n\n";
+                break;   
+            }
         }
-
         system("pause");
     }
 
@@ -726,6 +724,42 @@ public:
                 return;                
         }
         return;
+    }
+
+    int sunk(battleship *player, int index)
+    {
+        int ship = player->master_ship_pos[index].second;
+        player->master_ship_pos.erase(player->master_ship_pos.begin()+index);
+
+        for(auto &x : player->master_ship_pos)
+        {
+            if(x.second == ship)
+                return 0;
+        }
+        return 1;
+    }
+
+    void remove_ship(int ship)
+    {
+        ship_info *temp = ships;
+        if(ship == 0)
+        {
+            ships=ships->next;
+            delete temp;
+        }
+        else
+        {
+            ship_info *temp2;
+            for(int x = 0; x < ship-1; x++)
+            {
+                if(temp->next != NULL)
+                    temp2 = temp2->next;
+            }
+            temp = temp2->next;
+            temp2->next = temp->next;
+            delete temp;
+        }
+        system("pause");
     }
 };
 
